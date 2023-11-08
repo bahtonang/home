@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:siap/models/model.dart';
+import 'package:siap/models/data/lokasi.dart';
+import 'package:siap/models/data/persons.dart';
+import 'package:siap/models/sender/one.dart';
 import 'package:siap/services/service.dart';
 
 class MekanikSewing extends StatefulWidget {
@@ -24,17 +26,16 @@ class _MekanikSewingState extends State<MekanikSewing> {
   String? errorTeknisi;
   SiapApiService? siapApiService;
 
-  List<Teknisi> _items = [];
+  List<Persons> _items = [];
   List<Lokasi> _lokasi = [];
-  Teknisi? _selectedTeknisi;
+  Persons? _selectedTeknisi;
   Lokasi? _selectedLokasi;
+  OnesendModel? apiResult;
   String? namaTeknisi;
   String? hpTeknisi;
   String? nomorHp;
   String? pidTeknisi;
   String? namaLokasi;
-  String? urlonesend;
-  String? apikey;
 
   @override
   void initState() {
@@ -57,11 +58,20 @@ class _MekanikSewingState extends State<MekanikSewing> {
       });
     });
 
-    siapApiService?.getOnesend(widget.token.toString()).then((value) {
-      setState(() {
-        urlonesend = value?.data.alamat;
-        apikey = value?.data.rahasia;
-      });
+    getSender();
+
+    // siapApiService?.getOnesend(widget.token.toString()).then((value) {
+    //   setState(() {
+    //     urlonesend = value?.data.alamat;
+    //     apikey = value?.data.rahasia;
+    //   });
+    // });
+  }
+
+  Future getSender() async {
+    var res = await siapApiService?.getOnesend(widget.token.toString());
+    setState(() {
+      apiResult = res;
     });
   }
 
@@ -107,8 +117,8 @@ class _MekanikSewingState extends State<MekanikSewing> {
                     "\n" +
                     txtKeluhan.text;
                 siapApiService
-                    ?.kirimPesan(
-                        urlonesend ?? '', apikey ?? '', hpTeknisi ?? '', pesan)
+                    ?.kirimPesan(apiResult!.data.alamat,
+                        apiResult!.data.rahasia, hpTeknisi ?? '', pesan)
                     .then((value) {
                   txtKodebarang.clear();
                   txtKeluhan.clear();
@@ -154,13 +164,13 @@ class _MekanikSewingState extends State<MekanikSewing> {
                         SizedBox(
                           height: 20,
                         ),
-                        DropdownButtonFormField<Teknisi>(
+                        DropdownButtonFormField<Persons>(
                           value: _selectedTeknisi,
-                          items: _items.map((Teknisi item) {
-                            return DropdownMenuItem<Teknisi>(
+                          items: _items.map((Persons item) {
+                            return DropdownMenuItem<Persons>(
                                 child: Text(item.nama), value: item);
                           }).toList(),
-                          onChanged: (Teknisi? newValue) {
+                          onChanged: (Persons? newValue) {
                             setState(() {
                               _selectedTeknisi = newValue;
                               namaTeknisi = newValue?.nama;

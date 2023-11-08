@@ -14,6 +14,7 @@ class MyTiket extends StatefulWidget {
 
 class _MyTiketState extends State<MyTiket> {
   SiapApiService? siapApiService;
+  List<Tickets?> listTickets = [];
 
   @override
   void initState() {
@@ -48,20 +49,26 @@ class _MyTiketState extends State<MyTiket> {
                     ),
                   );
                 case ConnectionState.done:
-                  if (snapshot.data == null) {
+                  if (snapshot.hasError) {
                     return Container(
                       child: Center(
                         child: Text('Tidak Ada Data'),
                       ),
                     );
-                  } else {
-                    List<Tickets?> data = snapshot.data ?? [];
+                  } else if (snapshot.hasData && snapshot.data != []) {
+                    //    List<Tickets?> data = snapshot.data ?? [];
+                    listTickets = snapshot.data ?? [];
                     return snapshot.hasData
-                        ? _dataTiket(data)
+                        ? _dataTiket(listTickets)
                         : Center(
                             child: CircularProgressIndicator(),
                           );
-                    // return Container();
+                  } else {
+                    return Container(
+                      child: Center(
+                        child: Text('Tidak Ada Data'),
+                      ),
+                    );
                   }
               }
             }),
@@ -90,7 +97,7 @@ class _MyTiketState extends State<MyTiket> {
                       Row(
                         children: [
                           Text(
-                            tikets.notiket ?? '',
+                            tikets.notiket ?? '111113',
                             style: TextStyle(
                                 fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),

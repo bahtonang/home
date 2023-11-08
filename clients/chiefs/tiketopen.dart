@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:siap/models/data/tickets.dart';
 import 'package:siap/services/service.dart';
-import 'package:siap/models/model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TicketOpen extends StatefulWidget {
@@ -15,6 +15,7 @@ class TicketOpen extends StatefulWidget {
 
 class _TicketOpenState extends State<TicketOpen> {
   SiapApiService? siapApiService;
+  TicketsModel? apiResult;
   late SharedPreferences _preferences;
   String? tokenNo;
 
@@ -69,7 +70,7 @@ class _TicketOpenState extends State<TicketOpen> {
                       ),
                     );
                   } else {
-                    List<Tiket?> data = snapshot.data ?? [];
+                    List<Tickets?> data = snapshot.data ?? [];
                     return snapshot.hasData
                         ? _dataTiket(data)
                         : Center(
@@ -83,7 +84,7 @@ class _TicketOpenState extends State<TicketOpen> {
     );
   }
 
-  Widget _dataTiket(List<Tiket?> list) {
+  Widget _dataTiket(List<Tickets?> list) {
     return Column(
       children: [
         SizedBox(
@@ -95,7 +96,7 @@ class _TicketOpenState extends State<TicketOpen> {
                 Divider(color: Colors.black54),
             itemCount: list.length,
             itemBuilder: (context, index) {
-              Tiket? tiket = list[index]!;
+              Tickets? tiket = list[index]!;
               return Container(
                 color: Colors.lime[50],
                 child: ListTile(

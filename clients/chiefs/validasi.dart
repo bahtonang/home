@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:siap/models/data/ticket.dart';
 import 'package:siap/services/service.dart';
 
 class ValidasiTicket extends StatefulWidget {
@@ -13,7 +14,7 @@ class ValidasiTicket extends StatefulWidget {
 class _ValidasiTicketState extends State<ValidasiTicket> {
   bool loading = true;
   SiapApiService? siapApiService;
-  String? kode, nama;
+  TicketModel? apiResult;
 
   @override
   void initState() {
@@ -24,8 +25,7 @@ class _ValidasiTicketState extends State<ValidasiTicket> {
 
   Future getValidasi() async {
     var data = await siapApiService?.tiketClosing(widget.nomor.toString());
-    kode = data!.datanotiket.validasi;
-    nama = data.datanotiket.nama;
+    apiResult = data;
     loading = false;
     setState(() {});
   }
@@ -69,7 +69,7 @@ class _ValidasiTicketState extends State<ValidasiTicket> {
                                               height: 10.0,
                                             ),
                                             QrImageView(
-                                              data: kode ?? '',
+                                              data: apiResult!.data.validasi,
                                               size: 200,
                                             ),
                                           ],
@@ -138,7 +138,7 @@ class _ValidasiTicketState extends State<ValidasiTicket> {
                                                   height: 10,
                                                 ),
                                                 Text(
-                                                  nama ?? "",
+                                                  apiResult!.data.nama,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(

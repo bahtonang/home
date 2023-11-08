@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:siap/models/data/ticket.dart';
 import 'package:siap/services/service.dart';
 
 class ChiefAction extends StatefulWidget {
@@ -13,6 +14,7 @@ class ChiefAction extends StatefulWidget {
 
 class _ChiefActionState extends State<ChiefAction> {
   SiapApiService? siapApiService;
+  TicketModel? apiResult;
   String? tiketno,
       barang,
       keluhan,
@@ -37,15 +39,16 @@ class _ChiefActionState extends State<ChiefAction> {
 
     setState(() {
       loading = false;
-      tiketno = respond!.datanotiket.notiket;
-      barang = respond.datanotiket.namabarang;
-      keluhan = respond.datanotiket.keluhan;
-      lokasi = respond.datanotiket.lokasi;
-      nama = respond.datanotiket.nama;
-      bagian = respond.datanotiket.bagian;
-      statustiket = respond.datanotiket.statustiket;
-      noValidasi = respond.datanotiket.validasi;
-      teknisi = respond.datanotiket.teknisi;
+      apiResult = respond;
+      // tiketno = respond!.datanotiket.notiket;
+      // barang = respond.datanotiket.namabarang;
+      // keluhan = respond.datanotiket.keluhan;
+      // lokasi = respond.datanotiket.lokasi;
+      // nama = respond.datanotiket.nama;
+      // bagian = respond.datanotiket.bagian;
+      // statustiket = respond.datanotiket.statustiket;
+      // noValidasi = respond.datanotiket.validasi;
+      // teknisi = respond.datanotiket.teknisi;
     });
   }
 
@@ -107,7 +110,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('No Tiket :'),
                             subtitle: Text(
-                              tiketno ?? '',
+                              apiResult!.data.notiket,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -117,7 +120,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('Nama Barang :'),
                             subtitle: Text(
-                              barang ?? '',
+                              apiResult!.data.namabarang,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -127,7 +130,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('Lokasi :'),
                             subtitle: Text(
-                              lokasi ?? '',
+                              apiResult!.data.lokasi,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -137,7 +140,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('Kerusakan :'),
                             subtitle: Text(
-                              keluhan ?? '',
+                              apiResult!.data.keluhan,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -147,7 +150,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('Pengirim :'),
                             subtitle: Text(
-                              nama ?? '',
+                              apiResult!.data.nama,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -157,7 +160,7 @@ class _ChiefActionState extends State<ChiefAction> {
                           ListTile(
                             title: Text('Status :'),
                             subtitle: Text(
-                              statustiket ?? '',
+                              apiResult!.data.statustiket,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,

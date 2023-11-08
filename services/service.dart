@@ -1,13 +1,15 @@
 import 'package:siap/models/auth/user.dart';
-import 'package:siap/models/model.dart';
+import 'package:siap/models/data/lokasi.dart';
+import 'package:siap/models/data/persons.dart';
+import 'package:siap/models/data/ticket.dart';
 import 'package:http/http.dart' show Client;
 import 'dart:convert';
-
-import 'package:siap/models/tikets/tickets.dart';
+import 'package:siap/models/data/tickets.dart';
+import 'package:siap/models/sender/one.dart';
 
 class SiapApiService {
   Client client = Client();
-  static const String url = "http://192.168.19.6/apisiap/public/";
+  static const String url = "http://192.168.32.1/apisiap/public/";
 
   Future<LoginModel?> login(String pid, String pass) async {
     try {
@@ -27,7 +29,7 @@ class SiapApiService {
     return null;
   }
 
-  Future<Onesend?> getOnesend(String token) async {
+  Future<OnesendModel?> getOnesend(String token) async {
     Map<String, String> header = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -38,8 +40,7 @@ class SiapApiService {
       var respond =
           await client.get(Uri.parse("$url/onesend"), headers: header);
       if (respond.statusCode == 200) {
-        final data = onesendFromJson(respond.body);
-
+        final data = onesendModelFromJson(respond.body);
         return data;
       }
     } catch (e) {
@@ -48,7 +49,10 @@ class SiapApiService {
     return null;
   }
 
-  Future<List<Teknisi>> getTeknisi(
+//mksewing dart Call Teknisi
+//dropdown item
+
+  Future<List<Persons>> getTeknisi(
       String gedung, String kodebagian, String token) async {
     Map<String, String> header = {
       'Content-type': 'application/json',
@@ -58,35 +62,16 @@ class SiapApiService {
     var respond = await client
         .get(Uri.parse("$url/teknisi/$gedung/$kodebagian"), headers: header);
     if (respond.statusCode == 200) {
-      var jsonData = jsonDecode(respond.body);
-      var jsonArray = jsonData['data'];
-      List<Teknisi> listteknisi = [];
-      for (var data in jsonArray) {
-        Teknisi teknisi =
-            Teknisi(nama: data['nama'], hp: data['hp'], pid: data['pid']);
-        listteknisi.add(teknisi);
-      }
-      return listteknisi;
+      List<dynamic> body = jsonDecode(respond.body)['data'];
+      List<Persons> persons =
+          body.map((dynamic item) => Persons.fromJson(item)).toList();
+      return persons;
     }
     return [];
   }
 
-  Future<List<Personal>> getPersonal(String gedung, String statusstaf) async {
-    var respond =
-        await client.get(Uri.parse("$url/personal/$gedung/$statusstaf"));
-    if (respond.statusCode == 200) {
-      var jsonData = jsonDecode(respond.body);
-      var jsonArray = jsonData['data'];
-      List<Personal> listpersonal = [];
-      for (var data in jsonArray) {
-        Personal personal = Personal(
-            pid: data['pid'], nama: data['nama'], gedung: data['gedung']);
-        listpersonal.add(personal);
-      }
-      return listpersonal;
-    }
-    return [];
-  }
+//mksewing dart Call Teknisi
+//dropdown item
 
   Future<List<Lokasi>> getLokasi(String gedung, String token) async {
     Map<String, String> header = {
@@ -98,16 +83,10 @@ class SiapApiService {
       var respond =
           await client.get(Uri.parse("$url/lokasi/$gedung"), headers: header);
       if (respond.statusCode == 200) {
-        var jsonData = json.decode(respond.body);
-        var jsonArray = jsonData['data'];
-        List<Lokasi> listlokasi = [];
-        for (var data in jsonArray) {
-          Lokasi lokasi = Lokasi(
-            nama: data['nama'],
-          );
-          listlokasi.add(lokasi);
-        }
-        return listlokasi;
+        List<dynamic> body = jsonDecode(respond.body)['data'];
+        List<Lokasi> lokasi =
+            body.map((dynamic item) => Lokasi.fromJson(item)).toList();
+        return lokasi;
       }
     } catch (e) {
       throw e;
@@ -167,46 +146,12 @@ class SiapApiService {
         List<Tickets> tickets =
             body.map((dynamic item) => Tickets.fromJson(item)).toList();
         return tickets;
+      } else {
+        return [];
       }
     } catch (e) {
       throw e;
     }
-    return [];
-  }
-
-  Future<List<Tiket?>> getTiket(String gedung) async {
-    try {
-      var respond = await client.get(Uri.parse("$url/tiket/$gedung"));
-      if (respond.statusCode == 200) {
-        var jsonData = json.decode(respond.body);
-        var jsonArray = jsonData['data'];
-        List<Tiket> listtiket = [];
-        for (var data in jsonArray) {
-          Tiket tiket = Tiket(
-              notiket: data["notiket"],
-              tgl: data["tgl"],
-              kodebarang: data["kodebarang"],
-              namabarang: data["namabarang"],
-              keluhan: data["keluhan"],
-              lokasi: data["lokasi"],
-              gedung: data["gedung"],
-              pengirim: data["pengirim"],
-              teknisi: data["teknisi"],
-              mulai: data["mulai"],
-              selesai: data["selesai"],
-              statustiket: data["statustiket"],
-              validasi: data["validasi"],
-              baca: data["baca"],
-              tutup: data["tutup"],
-              keterangan: data["keterangan"]);
-          listtiket.add(tiket);
-        }
-        return listtiket;
-      }
-    } catch (e) {
-      throw e;
-    }
-    return [];
   }
 
   Future<int?> kirimPesan(
@@ -241,12 +186,25 @@ class SiapApiService {
 
 //tampilan tiket berdasarkan nomor tiket
 
-  Future<Notiket?> tiketAction(String no) async {
+  // Future<Notiket?> tiketAction(String no) async {
+  //   try {
+  //     var respond = await client.get(Uri.parse("$url/tiketaction/$no"));
+  //     if (respond.statusCode == 200) {
+  //       final data = notiketFromJson(respond.body);
+
+  //       return data;
+  //     }
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  //   return null;
+  // }
+
+  Future<TicketModel?> tiketAction(String no) async {
     try {
       var respond = await client.get(Uri.parse("$url/tiketaction/$no"));
       if (respond.statusCode == 200) {
-        final data = notiketFromJson(respond.body);
-
+        final data = ticketModelFromJson(respond.body);
         return data;
       }
     } catch (e) {
@@ -295,11 +253,11 @@ class SiapApiService {
 
 //menampilkan no, validasi di page validasi SPV
 
-  Future<Notiket?> tiketClosing(String no) async {
+  Future<TicketModel?> tiketClosing(String no) async {
     try {
       var respond = await client.get(Uri.parse("$url/tiketclosing/$no"));
       if (respond.statusCode == 200) {
-        final data = notiketFromJson(respond.body);
+        final data = ticketModelFromJson(respond.body);
         return data;
       }
     } catch (e) {
@@ -310,7 +268,7 @@ class SiapApiService {
 
   //tampilkan open tiket di halaman SPV
 
-  Future<List<Tiket?>> getOpenticket(String pid, String token) async {
+  Future<List<Tickets?>> getOpenticket(String pid, String token) async {
     Map<String, String> header = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -320,30 +278,10 @@ class SiapApiService {
       var respond =
           await client.get(Uri.parse("$url/tiketopen/$pid"), headers: header);
       if (respond.statusCode == 200) {
-        var jsonData = json.decode(respond.body);
-        var jsonArray = jsonData['data'];
-        List<Tiket> listtiket = [];
-        for (var data in jsonArray) {
-          Tiket tiket = Tiket(
-              notiket: data["notiket"],
-              tgl: data["tgl"],
-              kodebarang: data["kodebarang"] ?? '',
-              namabarang: data["namabarang"],
-              keluhan: data["keluhan"],
-              lokasi: data["lokasi"],
-              gedung: data["gedung"] ?? '',
-              pengirim: data["pengirim"],
-              teknisi: data["teknisi"],
-              mulai: data["mulai"],
-              selesai: data["selesai"],
-              statustiket: data["statustiket"],
-              validasi: data["validasi"],
-              baca: data["baca"],
-              tutup: data["tutup"],
-              keterangan: data["keterangan"]);
-          listtiket.add(tiket);
-        }
-        return listtiket;
+        List<dynamic> body = jsonDecode(respond.body)['data'];
+        List<Tickets> tickets =
+            body.map((dynamic item) => Tickets.fromJson(item)).toList();
+        return tickets;
       }
     } catch (e) {
       throw e;

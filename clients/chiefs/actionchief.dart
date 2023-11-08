@@ -1,29 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:siap/models/data/ticket.dart';
-// import 'package:go_router/go_router.dart';
 import 'package:siap/services/service.dart';
 
-class MktiketDetail extends StatefulWidget {
+class ActionChief extends StatefulWidget {
   final String? notiket;
 
-  const MktiketDetail({super.key, this.notiket});
+  const ActionChief({super.key, this.notiket});
 
   @override
-  State<MktiketDetail> createState() => _MktiketDetailState();
+  State<ActionChief> createState() => _ActionChiefState();
 }
 
-class _MktiketDetailState extends State<MktiketDetail> {
+class _ActionChiefState extends State<ActionChief> {
   SiapApiService? siapApiService;
   TicketModel? apiResult;
-  String? tiketno,
-      barang,
-      keluhan,
-      lokasi,
-      pengirim,
-      statustiket,
-      bagian,
-      validasi;
+  String? tiketno, barang, keluhan, lokasi, pengirim, statustiket, bagian;
   bool loading = true;
   bool berhasil = false;
 
@@ -40,18 +31,10 @@ class _MktiketDetailState extends State<MktiketDetail> {
     setState(() {
       loading = false;
       apiResult = respond;
-      // tiketno = respond!.datanotiket.notiket;
-      // barang = respond.datanotiket.namabarang;
-      // keluhan = respond.datanotiket.keluhan;
-      // lokasi = respond.datanotiket.lokasi;
-      // pengirim = respond.datanotiket.nama;
-      // bagian = respond.datanotiket.bagian;
-      // statustiket = respond.datanotiket.statustiket;
-      // validasi = respond.datanotiket.validasi;
     });
   }
 
-  Future _startTicket() async {
+  _startTicket() async {
     await siapApiService?.tiketStart(widget.notiket.toString()).then((value) {
       setState(() {
         if (value = true) {
@@ -65,7 +48,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ticket Detail'),
+        title: Text('Ticket Details'),
       ),
       body: Center(
         child: loading
@@ -123,7 +106,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
                           ListTile(
                             title: Text('Pengirim :'),
                             subtitle: Text(
-                              pengirim ?? '',
+                              'Pengirim',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -169,7 +152,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
                                       ));
                             }
                           } else if (apiResult!.data.statustiket == 'CLOSED' ||
-                              apiResult!.data.statustiket == 'START') {
+                              statustiket == 'START') {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext ctx) => AlertDialog(
@@ -187,7 +170,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
                         },
                         icon: Icon(Icons.start_rounded),
                         label: Text(
-                          'Mulai',
+                          'Close',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -197,15 +180,10 @@ class _MktiketDetailState extends State<MktiketDetail> {
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(200, 50),
                         ),
-                        onPressed: () {
-                          context.goNamed('closing', params: {
-                            'no': tiketno ?? '',
-                            'validasi': apiResult!.data.validasi
-                          });
-                        },
+                        onPressed: () {},
                         icon: Icon(Icons.close_rounded),
                         label: Text(
-                          'Selesai',
+                          'Hapus',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
