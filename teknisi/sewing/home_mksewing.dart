@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:siap/models/menus.dart';
+import 'package:siap/models/menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:badges/badges.dart' as badges;
@@ -205,7 +205,7 @@ class _HomeMksewingState extends State<HomeMksewing> {
               MenuIcon(
                 icon: Icons.auto_stories,
                 iconColor: Colors.orange,
-                label: "My Tickets",
+                label: "My Jobs",
                 onPres: () {
                   context.goNamed('mytiket',
                       params: {'pid': nopid, 'token': token ?? ''});

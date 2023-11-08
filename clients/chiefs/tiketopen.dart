@@ -63,7 +63,7 @@ class _TicketOpenState extends State<TicketOpen> {
                     ),
                   );
                 case ConnectionState.done:
-                  if (snapshot.data == null) {
+                  if (snapshot.data!.isEmpty) {
                     return Container(
                       child: Center(
                         child: Text('Tidak Ada Data'),
@@ -76,7 +76,6 @@ class _TicketOpenState extends State<TicketOpen> {
                         : Center(
                             child: CircularProgressIndicator(),
                           );
-                    // return Container();
                   }
               }
             }),

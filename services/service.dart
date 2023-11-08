@@ -9,7 +9,7 @@ import 'package:siap/models/sender/one.dart';
 
 class SiapApiService {
   Client client = Client();
-  static const String url = "http://192.168.32.1/apisiap/public/";
+  static const String url = "http://192.168.19.6/apisiap/public/";
 
   Future<LoginModel?> login(String pid, String pass) async {
     try {
@@ -140,7 +140,7 @@ class SiapApiService {
     };
     try {
       final respond =
-          await client.get(Uri.parse("$url/mytiket/$pid"), headers: header);
+          await client.get(Uri.parse("$url/myjobs/$pid"), headers: header);
       if (respond.statusCode == 200) {
         List<dynamic> body = jsonDecode(respond.body)['data'];
         List<Tickets> tickets =
@@ -183,22 +183,6 @@ class SiapApiService {
     }
     return 0;
   }
-
-//tampilan tiket berdasarkan nomor tiket
-
-  // Future<Notiket?> tiketAction(String no) async {
-  //   try {
-  //     var respond = await client.get(Uri.parse("$url/tiketaction/$no"));
-  //     if (respond.statusCode == 200) {
-  //       final data = notiketFromJson(respond.body);
-
-  //       return data;
-  //     }
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  //   return null;
-  // }
 
   Future<TicketModel?> tiketAction(String no) async {
     try {
@@ -251,6 +235,26 @@ class SiapApiService {
     return false;
   }
 
+//ticket close
+
+  Future<bool> tiketClose(String no, String ket) async {
+    Map<String, String> header = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json'
+    };
+    final respond = await client.put(Uri.parse("$url/tiketclose"),
+        headers: header, body: json.encode({"nomor": no, "ket": ket}));
+    if (respond.statusCode == 200) {
+      var data = jsonDecode(respond.body)["error"];
+      if (data == false) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
 //menampilkan no, validasi di page validasi SPV
 
   Future<TicketModel?> tiketClosing(String no) async {
@@ -267,7 +271,6 @@ class SiapApiService {
   }
 
   //tampilkan open tiket di halaman SPV
-
   Future<List<Tickets?>> getOpenticket(String pid, String token) async {
     Map<String, String> header = {
       'Content-type': 'application/json',

@@ -123,7 +123,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
                           ListTile(
                             title: Text('Pengirim :'),
                             subtitle: Text(
-                              pengirim ?? '',
+                              apiResult!.data.nama,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
@@ -168,7 +168,7 @@ class _MktiketDetailState extends State<MktiketDetail> {
                                         ],
                                       ));
                             }
-                          } else if (apiResult!.data.statustiket == 'CLOSED' ||
+                          } else if (apiResult!.data.statustiket == 'CLOSE' ||
                               apiResult!.data.statustiket == 'START') {
                             showDialog(
                                 context: context,
@@ -198,10 +198,26 @@ class _MktiketDetailState extends State<MktiketDetail> {
                           minimumSize: Size(200, 50),
                         ),
                         onPressed: () {
-                          context.goNamed('closing', params: {
-                            'no': tiketno ?? '',
-                            'validasi': apiResult!.data.validasi
-                          });
+                          if (apiResult!.data.statustiket == 'START') {
+                            context.goNamed('closing', params: {
+                              'no': apiResult!.data.notiket,
+                              'validasi': apiResult!.data.validasi
+                            });
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext ctx) => AlertDialog(
+                                      title: const Text('Tiket Closed...'),
+                                      content: Text('Tiket sudah di close'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                            child: Text('OK'))
+                                      ],
+                                    ));
+                          }
                         },
                         icon: Icon(Icons.close_rounded),
                         label: Text(

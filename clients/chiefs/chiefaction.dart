@@ -15,15 +15,6 @@ class ChiefAction extends StatefulWidget {
 class _ChiefActionState extends State<ChiefAction> {
   SiapApiService? siapApiService;
   TicketModel? apiResult;
-  String? tiketno,
-      barang,
-      keluhan,
-      lokasi,
-      nama,
-      statustiket,
-      noValidasi,
-      teknisi,
-      bagian;
   bool loading = true;
   bool berhasil = false;
 
@@ -40,20 +31,11 @@ class _ChiefActionState extends State<ChiefAction> {
     setState(() {
       loading = false;
       apiResult = respond;
-      // tiketno = respond!.datanotiket.notiket;
-      // barang = respond.datanotiket.namabarang;
-      // keluhan = respond.datanotiket.keluhan;
-      // lokasi = respond.datanotiket.lokasi;
-      // nama = respond.datanotiket.nama;
-      // bagian = respond.datanotiket.bagian;
-      // statustiket = respond.datanotiket.statustiket;
-      // noValidasi = respond.datanotiket.validasi;
-      // teknisi = respond.datanotiket.teknisi;
     });
   }
 
   _hapusTicket() async {
-    await siapApiService?.tiketDelete(tiketno ?? '').then((value) {
+    await siapApiService?.tiketDelete(apiResult!.data.notiket).then((value) {
       setState(() {
         if (value = true) {
           context.goNamed('menuutama');
@@ -178,7 +160,7 @@ class _ChiefActionState extends State<ChiefAction> {
                         ),
                         onPressed: () {
                           context.goNamed('validasi', params: {
-                            'no': tiketno ?? '',
+                            'no': apiResult!.data.notiket,
                           });
                         },
                         icon: Icon(Icons.start_rounded),

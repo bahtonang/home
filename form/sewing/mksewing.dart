@@ -57,15 +57,7 @@ class _MekanikSewingState extends State<MekanikSewing> {
         _lokasi = valuelokasi;
       });
     });
-
     getSender();
-
-    // siapApiService?.getOnesend(widget.token.toString()).then((value) {
-    //   setState(() {
-    //     urlonesend = value?.data.alamat;
-    //     apikey = value?.data.rahasia;
-    //   });
-    // });
   }
 
   Future getSender() async {

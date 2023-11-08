@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:siap/services/service.dart';
 
 class ClosingAction extends StatefulWidget {
   final String? kode, validasi;
@@ -9,6 +11,7 @@ class ClosingAction extends StatefulWidget {
 }
 
 class _ClosingActionState extends State<ClosingAction> {
+  SiapApiService? siapApiService;
   bool isValid = false;
   final loginFormkey = GlobalKey<FormState>();
   TextEditingController txtKet = TextEditingController();
@@ -17,31 +20,46 @@ class _ClosingActionState extends State<ClosingAction> {
   @override
   void initState() {
     super.initState();
+    siapApiService = SiapApiService();
     if (widget.kode == widget.validasi) {
       isValid = true;
     }
   }
 
-  //   void _handleLoginButton() {
-  //   if (loginFormkey.currentState!.validate()) {
-  //     siapApiService?.login(txtPid.text, txtPass.text).then((value) {
-  //       if (value == null) {
-  //         setState(() {
-  //           errorMsg = "PID atau Password Salah";
-  //         });
-  //       } else {
-  //         // setState(() {});
-  //         // nopid = value.user.pid;
-  //         // namauser = value.user.nama;
-  //         // namagedung = value.user.gedung;
-  //         // kodebagian = value.user.kodebagian;
-  //         // token = value.accessToken;
-  //         // savePref();
-  //         // context.pushNamed('menuutama');
-  //       }
-  //     });
-  //   }
-  // }
+  void _closeTicket() {
+    if (loginFormkey.currentState!.validate()) {
+      tutuptiket();
+    }
+  }
+
+  Future tutuptiket() async {
+    siapApiService
+        ?.tiketClose(widget.kode.toString(), txtKet.text)
+        .then((value) => true);
+    if (true) {
+      await _showMyDialog();
+    }
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Tiket Sudah di Close'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Tutup'),
+              onPressed: () {
+                context.goNamed('menuutama');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +109,7 @@ class _ClosingActionState extends State<ClosingAction> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        ();
+                        _closeTicket();
                       },
                       icon: const Icon(Icons.close),
                       label: const Text(
